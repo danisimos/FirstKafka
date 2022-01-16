@@ -54,6 +54,9 @@ public class Main {
             while (true) {
                 System.out.println("Enter a new message: ");
                 String message = scanner.nextLine();
+                if(message.equals("exit")) {
+                    break;
+                }
 
                 ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName, "Message", message);
 
@@ -65,6 +68,9 @@ public class Main {
                     e.printStackTrace();
                 }
             }
+
+            ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName, "exit", "exit");
+            producer.send(producerRecord);
         });
 
         thread.start();
@@ -79,7 +85,7 @@ public class Main {
             properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
             properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
 
-            Consumer<String, String> consumer = new KafkaConsumer<String, String>(properties);
+            Consumer<String, String> consumer = new KafkaConsumer<>(properties);
 
             consumer.subscribe(List.of(topicName));
 
@@ -88,6 +94,10 @@ public class Main {
 
                 for (ConsumerRecord<String, String> record: records) {
                     System.out.printf("Message received: offset = %d, key = %s, value = %s\n", record.offset(), record.key(), record.value());
+                    if(record.key().equals("exit")) {
+                        System.out.println("exiting");
+                        return;
+                    }
                 }
             }
         });
