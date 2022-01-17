@@ -26,7 +26,7 @@ public class Main {
         int partitions = 1;
         short replicationFactor = 1;
 
-        NewTopic topic = new NewTopic("asd", partitions, replicationFactor);
+        NewTopic topic = new NewTopic(topicName, partitions, replicationFactor);
 
         Properties properties = new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
